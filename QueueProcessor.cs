@@ -25,7 +25,7 @@ public class QueueProcessor
 
     [Function(nameof(QueueProcessor))]
     public void Run(
-        [QueueTrigger("my-queue", Connection = "AzureWebJobsStorage")] string message)
+        [QueueTrigger("My_Queue!", Connection = "MyStorageConnection")] string message)
     {
         _logger.LogInformation("Queue message received: {Message}", message);
     }

@@ -1,6 +1,12 @@
 {
-    "version": "2.0",
+    "comment_DO_NOT_INCLUDE": "THIS FILE IS INTENTIONALLY BROKEN - STUDENT MUST FIX",
+
+    "functionTimeOut": "5 minutes",
+
     "logging": {
+        "logLevel": {
+            "default": "Verbose"
+        },
         "applicationInsights": {
             "samplingSettings": {
                 "isEnabled": true,
@@ -8,5 +14,12 @@
             },
             "enableLiveMetricsFilters": true
         }
-    }
+    },
+    "extensions": {
+        "queues": {
+            "queueName": "my-queue",
+            "batchSize": 16
+        }
+    },
+    "myCustomSetting": "this-should-not-be-here"
 }
