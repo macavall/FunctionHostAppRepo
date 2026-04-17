@@ -1,0 +1,81 @@
+================================================================================
+  STUDENT CHALLENGE: This app is intentionally broken
+================================================================================
+
+When you deploy this app to Azure (or run `func start` locally), the host
+will fail to start AND the queue function will not bind correctly.
+
+Your job is to apply what you learned in Lab 1 (host.json) and Lab 2
+(binding configuration) to make this app run.
+
+There are a total of 7 issues split across two files.
+
+--------------------------------------------------------------------------------
+FILE 1: host.json  (5 issues - Lab 1 concepts)
+--------------------------------------------------------------------------------
+
+  Symptom:
+    Host fails to start. Logs show schema validation errors and the
+    Functions list is empty in the Portal.
+
+  Hints:
+    - What REQUIRED top-level property is missing? (Hint: ~v4 host)
+    - One property name has a casing typo. Look closely at "functionTime___".
+    - Timeouts are not human-readable strings.
+    - "Verbose" is not in the LogLevel enum used by Functions.
+    - Is "queueName" a valid host-wide default for the queues extension,
+      or is it per-function?
+    - Unknown top-level properties produce warnings (or errors).
+
+--------------------------------------------------------------------------------
+FILE 2: QueueProcessor.cs  (2 issues - Lab 2 concepts)
+--------------------------------------------------------------------------------
+
+  Symptom:
+    Even after host.json is fixed, the QueueProcessor function fails to
+    index. Logs will show:
+      - "The queue name 'My_Queue!' is invalid."
+      - "Storage account connection string 'MyStorageConnection' does not
+         exist."
+
+  Hints:
+    - Azure Storage queue names: lowercase letters, digits, and hyphens
+      only. 3-63 characters. Must start with a letter.
+    - The Connection property names an APP SETTING that must exist. For
+      this lab, use the default storage connection that the runtime
+      already has.
+
+--------------------------------------------------------------------------------
+HOW TO VERIFY
+--------------------------------------------------------------------------------
+
+  Local:
+    1. Start Azurite (or set a real connection string).
+    2. `func start` should report the host as Started and list
+       QueueProcessor under "Functions:".
+    3. Add a message to the "my-queue" queue and watch it log.
+
+  Azure:
+    1. `func azure functionapp publish <your-app-name>`
+    2. In the Portal, the Functions list should show QueueProcessor.
+    3. Drop a message in the "my-queue" queue (Storage Explorer / Portal).
+    4. Check Application Insights for the log entry.
+
+--------------------------------------------------------------------------------
+SOLUTION (do not peek)
+--------------------------------------------------------------------------------
+
+host.json:
+  1. Add  "version": "2.0"
+  2. Rename "functionTimeOut"  -> "functionTimeout"
+  3. Change "5 minutes"        -> "00:05:00"
+  4. Change "Verbose"          -> "Information"
+  5. Remove "queueName" from extensions.queues (it belongs in the trigger
+     attribute, NOT in host.json)
+  6. Remove "myCustomSetting" (and the "comment_..." key)
+
+QueueProcessor.cs:
+  1. Change "My_Queue!"        -> "my-queue"
+  2. Change Connection = "MyStorageConnection"
+       ->  Connection = "AzureWebJobsStorage"
+================================================================================
